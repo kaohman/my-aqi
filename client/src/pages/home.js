@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Layout } from '../components';
 import { useQuery, gql } from '@apollo/client';
 import Dropdown from '../components/dropdown';
+import City from './city';
 
 export const COUNTRIES = gql`
   query getCountries {
@@ -66,6 +67,7 @@ const Home = () => {
         changeValue={v => setCity(v)}
         options={citiesResult?.data?.cities.map(c => c.city)}
       />
+      {city && <City country={country} state={state} city={city} />}
     </Layout>
   );
 };

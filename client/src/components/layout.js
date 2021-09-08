@@ -1,12 +1,8 @@
 import React from 'react';
 import { Header } from '../components';
 import styled from '@emotion/styled';
-import { widths, unit } from '../styles';
+import { widths } from '../styles';
 
-/**
- * Layout renders the full page content:
- * with header, Page container and footer
- */
 const Layout = ({ fullWidth, children, grid }) => {
   return (
     <>
@@ -20,7 +16,6 @@ const Layout = ({ fullWidth, children, grid }) => {
 
 export default Layout;
 
-/** Layout styled components */
 const PageContainer = styled.div((props) => ({
   maxWidth: props.fullWidth ? null : `${widths.regularPageWidth}px`,
   width: '100%',

@@ -1,7 +1,6 @@
 import React from 'react';
-import { Layout } from '../components';
 import { useQuery, gql } from '@apollo/client';
-import CityDetail from '../components/track-detail';
+import CityDetail from '../components/city-detail';
 import QueryResult from '../components/query-result';
 
 export const CITY = gql`
@@ -30,16 +29,19 @@ export const CITY = gql`
 
 const City = ({ country, state, city }) => {
   const { loading, error, data } = useQuery(CITY, {
-    variables: { country, state, city },
+    variables: {
+      cityCountry: country,
+      cityState: state,
+      cityCity: city,
+    },
   });
+  console.log(data)
 
   if (loading) return <QueryResult loading={loading} error={error} />;
   return (
-    <Layout grid>
-      <QueryResult loading={loading} error={error} data={data}>
-        <CityDetail track={data?.current} />
-      </QueryResult>
-    </Layout>
+    <QueryResult loading={loading} error={error} data={data}>
+      <CityDetail city={city} current={data?.city.current} />
+    </QueryResult>
   );
 };
 
