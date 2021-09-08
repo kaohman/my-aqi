@@ -2,47 +2,93 @@ const { gql } = require('apollo-server');
 
 const typeDefs = gql`
   type Query {
-    "Get tracks array for homepage grid"
-    tracksForHome: [Track!]!
-    track(id: ID!): Track
+    "Get cities array for homepage dropdown"
+    cities(country: String, state: String): [City!]!
+    "Get city detailed data"
+    city(country: String, state: String, city: String): City
+    "Get states array for homepage dropdown"
+    states(country: String): [State!]!
+    "Get countries array for homepage dropdown"
+    countries: [Country!]!
   }
 
-  type Mutation {
-    incrementTrackViews(id: ID!): IncrementTrackViewsResponse!
+  "A city is a location for AQI"
+  type City {
+    city: String!
+    state: String!
+    country: String!
+    coordinates: [String!]!
+    # forecasts: [ForecastData!]
+    current: Current
+    # history: History
   }
 
-  type IncrementTrackViewsResponse {
-    code: Int!
-    success: Boolean!
-    message: String!
-    track: Track
+  "A state contains cities"
+  type State {
+    state: String!
+    country: String!
   }
 
-  "A track is a group of Modules that teaches about a specific topic"
-  type Track {
-    id: ID!
-    title: String!
-    author: Author!
-    thumbnail: String
-    length: Int
-    modulesCount: Int
-    description: String
-    numberOfViews: Int
-    modules: [ Module! ]!
+  "A country contains states"
+  type Country {
+    country: String!
   }
 
-  "Author of a complete Track or a Module"
-  type Author {
-    id: ID!
-    name: String!
-    photo: String
+  "Weather data for a given station"
+  type WeatherData {
+    ts: String!
+    tp: Int
+    tp_min: Int
+    pr: Int
+    hu: Int
+    ws: Float
+    wd: Int
+    ic: String
   }
 
-  "A module is a single unit of teaching. Multiple Modules compoase a Track"
-  type Module {
-    id: ID!
-    title: String!
-    length: Int
+  "Pollution data for a given station"
+  type PollutionData {
+    ts: String!
+    aqius: Int
+    mainus: String
+    # p2: Pollution
+    # o3: Pollution
+    # n2: Pollution
+    # s2: Pollution
+    # co: Pollution
+  }
+
+  # "Combined weather and pollution forecasted data"
+  # type ForecastData {
+  #   ts: String!
+  #   aqius: Int
+  #   mainus: String
+  #   p2: Pollution
+  #   o3: Pollution
+  #   n2: Pollution
+  #   s2: Pollution
+  #   co: Pollution
+  #   tp: Int
+  #   tp_min: Int
+  #   pr: Int
+  # }
+
+  # "Pollution measurements for a given station"
+  # type Pollution {
+  #   conc: Float
+  #   aqius: Int
+  # }
+
+  # "Historic weather and pollution data for a given station"
+  # type History {
+  #   weather: [WeatherData!]
+  #   pollution: [PollutionData!]
+  # }
+
+  "Current weather and pollution data for a given station"
+  type Current {
+    weather: WeatherData
+    pollution: PollutionData
   }
 `;
 

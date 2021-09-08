@@ -1,38 +1,16 @@
 const resolvers = {
   Query: {
-    tracksForHome: (_, __, { dataSources }) => {
-      return dataSources.trackAPI.getTracksForHome();
+    city: (_, { country, state, city }, { dataSources }) => {
+      return dataSources.aqiApi.getCity(country, state, city);
     },
-    track: (_, { id }, { dataSources }) => {
-      return dataSources.trackAPI.getTrack(id);
+    cities: (_, { country, state }, { dataSources }) => {
+      return dataSources.aqiApi.getCities(country, state);
     },
-  },
-  Mutation: {
-    incrementTrackViews: async (_, { id }, { dataSources }) => {
-      try {
-        const track = await dataSources.trackAPI.incrementTrackViews(id);
-        return {
-          code: 200,
-          success: true,
-          message: 'Blobbbb',
-          track,
-        }
-      } catch (error) {
-        return {
-          code: error.extensions.response.status,
-          success: false,
-          message: error.extensions.response.body,
-          track: null,
-        };
-      }
+    states: (_, { country }, { dataSources }) => {
+      return dataSources.aqiApi.getStates(country);
     },
-  },
-  Track: {
-    author: ({ authorId }, _, { dataSources }) => {
-      return dataSources.trackAPI.getAuthor(authorId);
-    },
-    modules: ({ id }, _, { dataSources }) => {
-      return dataSources.trackAPI.getTrackModules(id);
+    countries: (_, __, { dataSources }) => {
+      return dataSources.aqiApi.getCountries();
     },
   },
 };
