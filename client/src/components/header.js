@@ -2,12 +2,7 @@ import React from 'react';
 import { colors, widths } from '../styles';
 import styled from '@emotion/styled';
 import { Link } from '@reach/router';
-import logo from '../assets/space_cat_logo.png';
 
-/**
- * Header renders the top navigation
- * for this particular tutorial level, it only holds the home button
- */
 const Header = ({ children }) => {
   return (
     <HeaderBar>
@@ -15,12 +10,9 @@ const Header = ({ children }) => {
         <HomeButtonContainer>
           <HomeLink to="/">
             <HomeButton>
-              <LogoContainer>
-                <Logo src={logo} />
-              </LogoContainer>
               <Title>
-                <h3>Catstronaut</h3>
-                <div>Kitty space academy</div>
+                <h3>My AQI</h3>
+                <div>Real time Air Quality Index around the globe</div>
               </Title>
             </HomeButton>
           </HomeLink>
@@ -67,14 +59,6 @@ const HomeButton = styled.div({
   ':hover': {
     color: colors.pink.dark,
   },
-});
-
-const LogoContainer = styled.div({ display: 'flex', alignSelf: 'center' });
-
-const Logo = styled.img({
-  height: 60,
-  width: 60,
-  marginRight: 8,
 });
 
 const Title = styled.div({
