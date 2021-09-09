@@ -75,6 +75,9 @@ const CityDetail = ({ city, current }) => {
             {/* <p>ic: {weather.ic}</p> */}
           </DetailItem>
         </DetailRow>
+        <DetailItem>
+          <p>Weather and pollution data provided by <a href="https://www.iqair.com/" >IQAir</a></p>
+        </DetailItem>
       </CityDetails>
     </ContentSection>
   );
