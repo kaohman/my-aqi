@@ -3,6 +3,9 @@ const resolvers = {
     city: (_, { country, state, city }, { dataSources }) => {
       return dataSources.aqiApi.getCity(country, state, city);
     },
+    closestCity: (_, __, { dataSources }) => {
+      return dataSources.aqiApi.getClosestCity();
+    },
     cities: (_, { country, state }, { dataSources }) => {
       return dataSources.aqiApi.getCities(country, state);
     },

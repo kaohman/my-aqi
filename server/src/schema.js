@@ -6,6 +6,8 @@ const typeDefs = gql`
     cities(country: String, state: String): [City!]!
     "Get city detailed data"
     city(country: String, state: String, city: String): City
+    "Get nearest city based on IP address"
+    closestCity: City
     "Get states array for homepage dropdown"
     states(country: String): [State!]!
     "Get countries array for homepage dropdown"

@@ -2,13 +2,14 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { LoadingSpinner } from '@apollo/space-kit/Loaders/LoadingSpinner';
 
-/**
- * Query Results conditionally renders Apollo useQuery hooks states:
- * loading, error or its children when data is ready
- */
 const QueryResult = ({ loading, error, data, children }) => {
   if (error) {
-    return <p>ERROR: {error.message}</p>;
+    return (
+      <ErrorContainer>
+        <p>ERROR: {error.message}</p>
+        {error.message.includes('403') && <p>I'm cheap and using the free version of the API so your call limit has been reached. Please try again in one minute.</p>}
+      </ErrorContainer>
+    );
   }
   if (loading) {
     return (
@@ -17,9 +18,6 @@ const QueryResult = ({ loading, error, data, children }) => {
       </SpinnerContainer>
     );
   }
-  if (!data) {
-    return <p>Nothing to show...</p>;
-  }
   if (data) {
     return children;
   }
@@ -27,11 +25,16 @@ const QueryResult = ({ loading, error, data, children }) => {
 
 export default QueryResult;
 
-/** Query Result styled components */
+const ErrorContainer = styled.div({
+  margin: '0 auto',
+  textAlign: 'center',
+  width: '50%',
+});
+
 const SpinnerContainer = styled.div({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   width: '100%',
-  height: '100vh',
+  marginTop: '200px',
 });

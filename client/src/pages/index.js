@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 import { Router } from '@reach/router';
-/** importing our pages */
 import Home from './home';
 
 export default function Pages() {

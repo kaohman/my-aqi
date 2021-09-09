@@ -7,27 +7,35 @@ const Dropdown = ({
   type,
   value,
   changeValue,
-  isDisabled,
   isLoading,
 }) => {
   return (
-    <DropdownContainer>
-      {isLoading && <LoadingSpinner size="xsmall" theme="grayscale" />}
-      <select value={value} disabled={isDisabled} onChange={e => changeValue(e.currentTarget.value)}>
+    <div>
+      <Title>
+        <h4>{type}</h4>
+        {isLoading && <LoadingSpinner size="2xsmall" theme="grayscale" />}
+      </Title>
+      <Select value={value} disabled={!options} onChange={e => changeValue(e.currentTarget.value)}>
         <option value="">{`Choose a ${type}`}</option>
         {options?.map(value => (
           <option key={value} value={value}>{value}</option>
         ))}
-      </select>
-    </DropdownContainer>
+      </Select>
+    </div>
   );
 };
 
 export default Dropdown;
 
-const DropdownContainer = styled.div({
+const Title = styled.div({
   display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  width: '100%',
+  justifyContent: 'space-between',
+  marginBottom: '5px',
+  h4: {
+    textTransform: 'capitalize',
+  },
+});
+
+const Select = styled.select({
+  width: '200px',
 });

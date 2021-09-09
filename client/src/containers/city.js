@@ -35,9 +35,7 @@ const City = ({ country, state, city }) => {
       cityCity: city,
     },
   });
-  console.log(data)
 
-  if (loading) return <QueryResult loading={loading} error={error} />;
   return (
     <QueryResult loading={loading} error={error} data={data}>
       <CityDetail city={city} current={data?.city.current} />

@@ -19,6 +19,24 @@ class AqiApi extends RESTDataSource {
     };
   }
 
+  async getClosestCity() {
+    const { city, region, country, ip_address } = await this.get(`https://ipgeolocation.abstractapi.com/v1/?api_key=${process.env.ABSTRACT_API_KEY}`);
+    const result = await this.get(`/nearest_city?key=${process.env.AIR_VISUAL_API_KEY}`, undefined, {
+      headers: {
+        'X-Forwarded-For': ip_address,
+      },
+    });
+    return {
+      city,
+      state: region,
+      country: country === 'United States' ? 'USA' : country,
+      coordinates: result.data.location.coordinates,
+      // forecasts: result.data.forecasts,
+      current: result.data.current,
+      // history: result.data.history,
+    };
+  }
+
   async getCities(country, state) {
     const result = await this.get(`/cities?state=${state}&country=${country}&key=${process.env.AIR_VISUAL_API_KEY}`);
     return result.data.map(({ city }) => {
