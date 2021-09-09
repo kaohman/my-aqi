@@ -1,9 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import moment from 'moment';
-import {
-  colors,
-} from '../styles';
+import { colors } from '../styles';
 import ContentSection from './content-section';
 
 const CityDetail = ({ city, current }) => {
@@ -70,9 +68,8 @@ const CityDetail = ({ city, current }) => {
             <p>Temperature: {(weather.tp * (9/5)) + 32}°F</p>
             <p>Atmospheric Pressure: {weather.pr * 0.75} mm Hg</p>
             <p>Humidity: {weather.hu}%</p>
-            <p>Wind Speed: {weather.ws * 2.237} mph</p>
+            <p>Wind Speed: {(weather.ws * 2.237).toFixed(2)} mph</p>
             <p>Wind Direction: {weather.wd}° from N</p>
-            {/* <p>ic: {weather.ic}</p> */}
           </DetailItem>
         </DetailRow>
         <DetailItem>

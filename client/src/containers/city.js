@@ -3,6 +3,7 @@ import { useQuery, gql } from '@apollo/client';
 import CityDetail from '../components/city-detail';
 import QueryResult from '../components/query-result';
 
+//GraphQL Queries
 export const CITY = gql`
   query getCity($cityCountry: String, $cityState: String, $cityCity: String) {
     city(country: $cityCountry, state: $cityState, city: $cityCity) {
@@ -27,8 +28,10 @@ export const CITY = gql`
   }
 `;
 
+// Component
 const City = ({ country, state, city }) => {
   const { loading, error, data } = useQuery(CITY, {
+    skip: !country || !state || !city,
     variables: {
       cityCountry: country,
       cityState: state,

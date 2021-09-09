@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { Layout } from '../components';
 import { useQuery, gql } from '@apollo/client';
 import Dropdown from '../components/dropdown';
 import City from '../containers/city';
 
+
+// GraphQL Queries
 export const CLOSEST_CITY = gql`
   query getClosestCity {
     closestCity {
@@ -59,43 +61,65 @@ export const CITIES = gql`
   }
 `;
 
-
+// Component
 const Home = () => {
-  const [country, setCountry] = useState(undefined);
-  const [state, setGeoState]= useState(undefined);
-  const [city, setCity]= useState(undefined);
+  const initialFilters = {
+    country: undefined,
+    state: undefined,
+    city: undefined,
+  };
+  const [filters, setFilters] = useState(initialFilters);
 
-  const setFields = (data) => {
-    setCountry(data.country);
-    setGeoState(data.state);
-    setCity(data.city);
-  }
+  const setCurrentLocation = (filters) => {
+    window.localStorage.setItem('locationFilters', JSON.stringify(filters));
+    setFilters(filters);
+  };
+
+  const updateDropdown = (type, value) => {
+    if (type === 'country') {
+      setCurrentLocation({ country: value, state: undefined, city: undefined });
+      return;
+    }
+    if (type === 'state') {
+      setCurrentLocation({ ...filters, state: value, city: undefined });
+      return;
+    }
+    if (type === 'city') {
+      setCurrentLocation({ ...filters, city: value });
+      return;
+    }
+  };
+
+  useEffect(() => {
+    const lastFilters = window.localStorage.getItem('locationFilters');
+    if (!!lastFilters?.country) {
+      setCurrentLocation(JSON.parse(lastFilters));
+    }
+  }, []);
 
   useQuery(CLOSEST_CITY, {
-    onCompleted: ({ closestCity }) => {
-      setFields(closestCity);
+    // skip: filters.country || filters.state || filters.city,
+    onCompleted: ({ closestCity: { country, state, city} }) => {
+      setCurrentLocation({
+        country,
+        state,
+        city,
+      });
     },
   });
 
   const countriesResult = useQuery(COUNTRIES, {
-    onError: () => {
-      setCity(undefined);
-      setGeoState(undefined);
-      setCountry(undefined)
-    },
+    onError: () => setCurrentLocation(initialFilters),
   });
   const statesResult = useQuery(STATES, {
-    skip: !country,
-    variables: { statesCountry: country },
-    onError: () => {
-      setCity(undefined);
-      setGeoState(undefined);
-    },
+    skip: !filters.country,
+    variables: { statesCountry: filters.country },
+    onError: () => setCurrentLocation({ ...filters, state: undefined, city: undefined }),
   });
   const citiesResult = useQuery(CITIES, {
-    skip: !country || !state,
-    variables: { citiesCountry: country, citiesState: state },
-    onError: () => setCity(undefined),
+    skip: !filters.country || !filters.state,
+    variables: { citiesCountry: filters.country, citiesState: filters.state },
+    onError: () => setCurrentLocation({ ...filters, city: undefined }),
   });
 
   return (
@@ -109,34 +133,34 @@ const Home = () => {
           <Dropdown
             isLoading={countriesResult?.loading}
             type="country"
-            value={country}
-            changeValue={v => setCountry(v)}
+            value={filters.country}
+            changeValue={v => updateDropdown('country', v)}
             options={countriesResult?.data?.countries.map(c => c.country)}
           />
           <Dropdown
             isLoading={statesResult.loading}
             type="state"
-            value={state}
-            changeValue={v => setGeoState(v)}
+            value={filters.state}
+            changeValue={v => updateDropdown('state', v)}
             options={statesResult?.data?.states.map(s => s.state)}
           />
           <Dropdown
             isLoading={citiesResult.loading}
             type="city"
-            value={city}
-            changeValue={v => setCity(v)}
+            value={filters.city}
+            changeValue={v => updateDropdown('city', v)}
             options={citiesResult?.data?.cities.map(c => c.city)}
           />
         </DropdownContainer>
       </FiltersContainer>
-      {!!city && 
+      {!!filters.city && 
         <City
-          country={country}
-          state={state}
-          city={city}
+          country={filters.country}
+          state={filters.state}
+          city={filters.city}
         />
       }
-      {!city && 
+      {!filters.city && 
         <PlaceholderText>Select a location using the filters above.</PlaceholderText>
       }
     </Layout>
