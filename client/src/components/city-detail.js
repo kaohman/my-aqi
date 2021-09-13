@@ -73,7 +73,7 @@ const CityDetail = ({ city, current }) => {
           </DetailItem>
         </DetailRow>
         <DetailItem>
-          <p>Weather and pollution data provided by <a href="https://www.iqair.com/" >IQAir</a></p>
+          <p>Weather and pollution data provided by <a href="https://www.iqair.com/" target="_blank" rel="noreferrer">IQAir</a></p>
         </DetailItem>
       </CityDetails>
     </ContentSection>
