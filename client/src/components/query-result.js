@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { LoadingSpinner } from '@apollo/space-kit/Loaders/LoadingSpinner';
+import ErrorModal from './error-modal';
 
 const QueryResult = ({ loading, error, data, children }) => {
-  if (error) {
+  const [errorDismissed, setErrorDismissed] = useState(false);
+
+  useEffect(() => {
+    setErrorDismissed(false);
+  }, [error]);
+
+  if (error && !errorDismissed) {
     return (
-      <ErrorContainer>
-        <p>ERROR: {error.message}</p>
-        {error.message.includes('403') && <p>I'm cheap and using the free version of the API so your call limit has been reached. Please try again in one minute.</p>}
-      </ErrorContainer>
+      <ErrorModal error={error} dismissError={() => setErrorDismissed(true)} />
     );
   }
   if (loading) {
@@ -21,15 +25,10 @@ const QueryResult = ({ loading, error, data, children }) => {
   if (data) {
     return children;
   }
+  return null;
 };
 
 export default QueryResult;
-
-const ErrorContainer = styled.div({
-  margin: '0 auto',
-  textAlign: 'center',
-  width: '50%',
-});
 
 const SpinnerContainer = styled.div({
   display: 'flex',

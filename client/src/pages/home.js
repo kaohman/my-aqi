@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { Layout } from '../components';
 import { useQuery, gql } from '@apollo/client';
 import Dropdown from '../components/dropdown';
+import ErrorModal from '../components/error-modal';
 import City from '../containers/city';
 
 
@@ -69,61 +70,71 @@ const Home = () => {
     city: undefined,
   };
   const [filters, setFilters] = useState(initialFilters);
+  const [error, setError] = useState(null);
 
-  const setCurrentLocation = (filters) => {
+  const saveCurrentLocation = (filters) => {
     window.localStorage.setItem('locationFilters', JSON.stringify(filters));
     setFilters(filters);
   };
 
+  const handleQueryError = (filters, error) => {
+    setFilters(filters);
+    setError(error);
+  }
+
   const updateDropdown = (type, value) => {
     if (type === 'country') {
-      setCurrentLocation({ country: value, state: undefined, city: undefined });
+      setFilters({ country: value, state: undefined, city: undefined });
       return;
     }
     if (type === 'state') {
-      setCurrentLocation({ ...filters, state: value, city: undefined });
+      setFilters({ ...filters, state: value, city: undefined });
       return;
     }
     if (type === 'city') {
-      setCurrentLocation({ ...filters, city: value });
+      saveCurrentLocation({ ...filters, city: value });
       return;
     }
   };
 
-  useEffect(() => {
-    const lastFilters = window.localStorage.getItem('locationFilters');
-    if (!!lastFilters?.country) {
-      setCurrentLocation(JSON.parse(lastFilters));
-    }
-  }, []);
-
   useQuery(CLOSEST_CITY, {
-    // skip: filters.country || filters.state || filters.city,
+    skip: !!window.localStorage.getItem('locationFilters'),
     onCompleted: ({ closestCity: { country, state, city} }) => {
-      setCurrentLocation({
-        country,
-        state,
-        city,
-      });
+      const lastFilters = window.localStorage.getItem('locationFilters');
+      if (!lastFilters) {
+        saveCurrentLocation({
+          country,
+          state,
+          city,
+        });
+      }
     },
   });
 
   const countriesResult = useQuery(COUNTRIES, {
-    onError: () => setCurrentLocation(initialFilters),
+    onError: error => handleQueryError(initialFilters, error),
   });
   const statesResult = useQuery(STATES, {
     skip: !filters.country,
     variables: { statesCountry: filters.country },
-    onError: () => setCurrentLocation({ ...filters, state: undefined, city: undefined }),
+    onError: error => handleQueryError({ ...filters, state: undefined, city: undefined }, error),
   });
   const citiesResult = useQuery(CITIES, {
     skip: !filters.country || !filters.state,
     variables: { citiesCountry: filters.country, citiesState: filters.state },
-    onError: () => setCurrentLocation({ ...filters, city: undefined }),
+    onError: error => handleQueryError({ ...filters, city: undefined }, error),
   });
+
+  useEffect(() => {
+    const lastFilters = window.localStorage.getItem('locationFilters');
+    if (!!lastFilters) {
+      setFilters(JSON.parse(lastFilters));
+    }
+    }, []);
 
   return (
     <Layout grid>
+      {error && <ErrorModal error={error} dismissError={() => setError(null)} />}
       <FiltersContainer>
         <Title>
           <h3>Climate change and poor air quality got you down?</h3>
