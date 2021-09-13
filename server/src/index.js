@@ -1,20 +1,41 @@
 const { ApolloServer } = require('apollo-server');
+const isEmail = require('isemail');
+
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
+const { createStore } = require('./utils');
+
 const AqiApi = require('./datasources/aqi-api');
+const UserApi = require('./datasources/user-api');
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
+const store = createStore();
+
+const dataSources = () => ({
+  aqiApi: new AqiApi(),
+  userApi: new UserApi(),
+});
+
+const context = async ({ request }) => {
+  const auth = (request.headers && request.headers.authorization) || '';
+  const email = Buffer.from(auth, 'base64').toString('ascii');
+
+  if (!isEmail.validate(email)) return { user: null };
+
+  const users = await store.users.findOrCreate({ where: { email } });
+  const user = users && users[0] || null;
+
+  return { user };
+};
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  dataSources: () => {
-    return {
-      aqiApi: new AqiApi(),
-    };
-  },
+  dataSources,
+  context,
 });
   
 server.listen({ port: process.env.PORT || 4000 }).then(() => {

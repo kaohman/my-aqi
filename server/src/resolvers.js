@@ -16,6 +16,15 @@ const resolvers = {
       return dataSources.aqiApi.getCountries();
     },
   },
+  Mutation: {
+    login: async (_, { email }, { dataSources }) => {
+      const user = await dataSources.userApi.findOrCreateUser({ email });
+      if (user) {
+        user.token = Buffer.from(email).toString('base64');
+        return user;
+      }
+    },
+  }
 };
 
 module.exports = resolvers;

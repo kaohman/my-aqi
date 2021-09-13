@@ -13,8 +13,8 @@ class AqiApi extends RESTDataSource {
       state,
       country,
       coordinates: result.data.location.coordinates,
-      // forecasts: result.data.forecasts,
       current: result.data.current,
+      // forecasts: result.data.forecasts,
       // history: result.data.history,
     };
   }
