@@ -36,6 +36,10 @@ const server = new ApolloServer({
   resolvers,
   dataSources,
   context,
+  introspection: true,
+  apollo: {
+    key: process.env.APOLLO_KEY,
+  },
 });
   
 server.listen({ port: process.env.PORT || 4000 }).then(() => {

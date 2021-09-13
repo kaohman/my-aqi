@@ -1,5 +1,11 @@
 const resolvers = {
   Query: {
+    user: (_, __, { dataSources }) => {
+      dataSources.userApi.findOrCreateUser();
+    },
+    favoriteCities: (_, __, { dataSources }) => {
+      return dataSources.userApi.getFavoriteCities();
+    },
     city: (_, { country, state, city }, { dataSources }) => {
       return dataSources.aqiApi.getCity(country, state, city);
     },
@@ -22,6 +28,36 @@ const resolvers = {
       if (user) {
         user.token = Buffer.from(email).toString('base64');
         return user;
+      }
+    },
+    addFavoriteCity: async (_, { country, state, city }, { dataSources }) => {
+      const result = await dataSources.userApi.addFavoriteCity(country, state, city);
+
+      if (!result) {
+        return {
+          success: false,
+          message: 'Failed to add favorite city',
+        };
+      }
+  
+      return {
+        success: true,
+        message: 'Favorite city added',
+      };
+    },
+    removeFavoriteCity: async (_, { id }, { dataSources }) => {
+      const result = await dataSources.userApi.removeFavoriteCity(id);
+
+      if (!result) {
+        return {
+          success: false,
+          message: 'Failed to remove favorite city',
+        }
+      }
+
+      return {
+        success: true,
+        message: 'Favorite city removed',
       }
     },
   }

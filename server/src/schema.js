@@ -4,7 +4,7 @@ const typeDefs = gql`
   type Query {
     user: User
     "Get user's favorite cities with current weather and pollution data"
-    favoriteCities(userId: ID): [City]
+    favoriteCities(userId: ID!): [FavoriteCity]
     "Get cities array for homepage dropdown"
     cities(country: String, state: String): [City!]!
     "Get city detailed data"
@@ -21,16 +21,16 @@ const typeDefs = gql`
     "Log in to save favorite cities"
     login(email: String): User
     "Add city to favorites"
-    addFavoriteCity(country, state, city): FavoriteUpdateResponse!
+    addFavoriteCity(country: String, state: String, city: String): FavoriteUpdateResponse!
     "Remove city from favorites"
-    removeFavoriteCity(country, state, city): FavoriteUpdateResponse!
+    removeFavoriteCity(id: ID): FavoriteUpdateResponse!
   }
 
   type User {
     id: ID!
     email: String!
     token: String
-    favoriteCities: [City]
+    favoriteCities: [FavoriteCity]
   }
 
   type FavoriteUpdateResponse {
@@ -48,6 +48,13 @@ const typeDefs = gql`
     # forecasts: [ForecastData!]
     current: Current
     # history: History
+  }
+
+  type FavoriteCity {
+    id: ID!
+    country: String!
+    state: String!
+    city: String!
   }
 
   "A state contains cities"
