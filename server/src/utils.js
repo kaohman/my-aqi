@@ -22,5 +22,8 @@ module.exports.createStore = () => {
     city: Sequelize.STRING,
   });
 
+  users.sync();
+  favoriteCities.sync();
+
   return { db, users, favoriteCities };
 };

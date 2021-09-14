@@ -1,10 +1,15 @@
 const resolvers = {
   Query: {
-    user: (_, __, { dataSources }) => {
+    me: (_, __, { dataSources }) => {
       dataSources.userApi.findOrCreateUser();
     },
-    favoriteCities: (_, __, { dataSources }) => {
-      return dataSources.userApi.getFavoriteCities();
+    favoriteCities: async (_, __, { dataSources }) => {
+      const favoriteCities = await dataSources.userApi.getFavoriteCities();
+      return favoriteCities.map(async favorite => {
+        const { id, country, state, city } = favorite;
+        const details = await dataSources.aqiApi.getCity(country, state, city);
+        return { id, ...details };
+      });
     },
     city: (_, { country, state, city }, { dataSources }) => {
       return dataSources.aqiApi.getCity(country, state, city);
@@ -33,10 +38,10 @@ const resolvers = {
     addFavoriteCity: async (_, { country, state, city }, { dataSources }) => {
       const result = await dataSources.userApi.addFavoriteCity(country, state, city);
 
-      if (!result) {
+      if (!result.success) {
         return {
           success: false,
-          message: 'Failed to add favorite city',
+          message: `Failed to add favorite city. ${result.content}`,
         };
       }
   
@@ -60,7 +65,7 @@ const resolvers = {
         message: 'Favorite city removed',
       }
     },
-  }
+  },
 };
 
 module.exports = resolvers;

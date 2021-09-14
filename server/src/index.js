@@ -16,11 +16,11 @@ const store = createStore();
 
 const dataSources = () => ({
   aqiApi: new AqiApi(),
-  userApi: new UserApi(),
+  userApi: new UserApi({ store }),
 });
 
-const context = async ({ request }) => {
-  const auth = (request.headers && request.headers.authorization) || '';
+const context = async ({ req }) => {
+  const auth = (req.headers && req.headers.authorization) || '';
   const email = Buffer.from(auth, 'base64').toString('ascii');
 
   if (!isEmail.validate(email)) return { user: null };

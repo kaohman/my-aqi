@@ -1,7 +1,7 @@
-const { RESTDataSource } = require('apollo-datasource-rest');
+const { DataSource } = require('apollo-datasource');
 const isEmail = require('isemail');
 
-class UserApi extends RESTDataSource {
+class UserApi extends DataSource {
   constructor({ store }) {
     super();
     this.store = store;
@@ -20,18 +20,25 @@ class UserApi extends RESTDataSource {
   }
 
   async getFavoriteCities() {
-    // get user's favorite cities and user AQI api to get current info for each of those cities
+    // get user's favorite cities and use AQI api to get current info for each of those cities
     const userId = this.context.user.id;
-    const response = await this.store.favoriteCities.find({ where: { userId } });
-    console.log(response);
+    const favorites = await this.store.favoriteCities.findAll({ where: { userId } });
+    console.log(favorites)
+    return favorites;
   }
 
   async addFavoriteCity(country, state, city) {
     const userId = this.context.user.id;
-    const response = await this.store.favoriteCities.findOrCreate({
+
+    const favoriteCities = await this.store.favoriteCities.findAll({ where: { userId } });
+    if (favoriteCities.length >= 3) return { success: false, content: 'User cannot have more than 3 favorite cities' };
+
+    const res = await this.store.favoriteCities.findOrCreate({
       where: { userId, country, state, city },
     });
-    return response && response.length ? res[0].get() : false;
+    return res && res.length
+      ? { success: true, content: res[0].get() }
+      : { success: false, content: '' };
   }
 
   async removeFavoriteCity(id) {

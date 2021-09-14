@@ -2,9 +2,9 @@ const { gql } = require('apollo-server');
 
 const typeDefs = gql`
   type Query {
-    user: User
+    me: User
     "Get user's favorite cities with current weather and pollution data"
-    favoriteCities(userId: ID!): [FavoriteCity]
+    favoriteCities: [FavoriteCity]
     "Get cities array for homepage dropdown"
     cities(country: String, state: String): [City!]!
     "Get city detailed data"
@@ -30,13 +30,11 @@ const typeDefs = gql`
     id: ID!
     email: String!
     token: String
-    favoriteCities: [FavoriteCity]
   }
 
   type FavoriteUpdateResponse {
     success: Boolean!
     message: String
-    favoriteCities: [City]
   }
 
   "A city is a location for AQI"
@@ -55,6 +53,10 @@ const typeDefs = gql`
     country: String!
     state: String!
     city: String!
+    coordinates: [String!]!
+    # forecasts: [ForecastData!]
+    current: Current
+    # history: History
   }
 
   "A state contains cities"
