@@ -4,17 +4,25 @@ import QueryResult from '../components/query-result';
 
 //GraphQL Queries
 export const FAVORITES = gql`
-  query getFavoriteCities($userId) {
+query getFavoriteCities {
+  favoriteCities {
+    id
+    country
+    state
+    city
+    coordinates
+    current {
+      pollution {
+        aqius
+      }
+    }
   }
+}
 `;
 
 // Component
-const FavoriteCities = ({ userId }) => {
-  const { loading, error, data } = useQuery(FAVORITES, {
-    variables: {
-      userId,
-    },
-  });
+const FavoriteCities = () => {
+  const { loading, error, data } = useQuery(FAVORITES);
 
   return (
     <QueryResult loading={loading} error={error} data={data}>

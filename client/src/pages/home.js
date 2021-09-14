@@ -6,6 +6,7 @@ import Dropdown from '../components/dropdown';
 import ErrorModal from '../components/error-modal';
 import City from '../containers/city';
 import FavoriteCities from '../containers/favorite-cities';
+import Login from '../containers/login';
 
 
 // GraphQL Queries
@@ -165,7 +166,8 @@ const Home = () => {
           />
         </DropdownContainer>
       </FiltersContainer>
-      {/* <FavoriteCities userId={1} /> */}
+      <Login />
+      <FavoriteCities />
       {!!filters.city && 
         <City
           country={filters.country}
