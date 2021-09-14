@@ -71,6 +71,7 @@ const Home = () => {
     state: undefined,
     city: undefined,
   };
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [filters, setFilters] = useState(initialFilters);
   const [error, setError] = useState(null);
 
@@ -128,11 +129,16 @@ const Home = () => {
   });
 
   useEffect(() => {
+    const hasToken = !!window.localStorage.getItem('token');
+    if (hasToken) {
+      setIsLoggedIn(true);
+    }
+
     const lastFilters = window.localStorage.getItem('locationFilters');
     if (!!lastFilters) {
       setFilters(JSON.parse(lastFilters));
     }
-    }, []);
+  }, []);
 
   return (
     <Layout grid>
@@ -166,8 +172,8 @@ const Home = () => {
           />
         </DropdownContainer>
       </FiltersContainer>
-      <Login />
-      <FavoriteCities />
+      {!isLoggedIn && <Login />}
+      {isLoggedIn && <FavoriteCities />}
       {!!filters.city && 
         <City
           country={filters.country}

@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import moment from 'moment';
 import { colors } from '../styles';
 import ContentSection from './content-section';
+import { setAqiInfo } from '../utils/helpers';
 
 const CityDetail = ({ city, current }) => {
   const {
@@ -14,38 +15,11 @@ const CityDetail = ({ city, current }) => {
     return moment(ts).format('LLLL');
   };
 
-  const setAqiInfo = (aqi) => {
-    if (aqi < 51) return {
-      color: 'green',
-      message: 'Good',
-    };
-    if (aqi < 101) return {
-      color: 'yellow',
-      message: 'Moderate',
-    };
-    if (aqi < 151) return {
-      color: 'orange',
-      message: 'Unhealthy for Sensitive Groups',
-    };
-    if (aqi < 201) return {
-      color: 'red',
-      message: 'Unhealthy',
-    };
-    if (aqi >= 201) return {
-      color: 'purple',
-      message: 'Very Unhealthy',
-    };
-    return {
-      color: 'black',
-      message: 'Unknown',
-    };
-  };
-
   const aqiInfo = setAqiInfo(pollution.aqius);
 
   return (
     <ContentSection>
-      <CityDetails>
+      <CityDetails color={aqiInfo.color}>
         <DetailRow>
           <div>
             <h3>The current AQI in {city} is</h3>
@@ -82,15 +56,14 @@ const CityDetail = ({ city, current }) => {
 
 export default CityDetail;
 
-const CityDetails = styled.div({
+const CityDetails = styled.div((props) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   padding: 20,
-  borderRadius: 4,
   marginBottom: 30,
-  border: `solid 1px ${colors.silver.dark}`,
-  backgroundColor: colors.silver.lighter,
+  border: `solid 2px ${colors[props.color].base}`,
+  backgroundColor: colors[props.color].lightest,
   h1: {
     width: '100%',
     textAlign: 'center',
@@ -101,7 +74,7 @@ const CityDetails = styled.div({
     marginBottom: 5,
     color: colors.text,
   },
-});
+}));
 
 const DetailRow = styled.div({
   textAlign: 'center',
