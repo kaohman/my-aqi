@@ -1,5 +1,6 @@
 import React from 'react';
 import { useQuery, gql } from '@apollo/client';
+import styled from '@emotion/styled';
 import CityDetail from '../components/city-detail';
 import QueryResult from '../components/query-result';
 
@@ -29,21 +30,30 @@ export const CITY = gql`
 `;
 
 // Component
-const City = ({ country, state, city }) => {
+const City = ({ location }) => {
+  console.log(location)
   const { loading, error, data } = useQuery(CITY, {
-    skip: !country || !state || !city,
+    skip: !location,
     variables: {
-      cityCountry: country,
-      cityState: state,
-      cityCity: city,
+      cityCountry: location && location.country,
+      cityState: location && location.state,
+      cityCity: location && location.city,
     },
   });
 
+  if (!location) return <PlaceholderText>Select a location using the filters above.</PlaceholderText>;
+
   return (
     <QueryResult loading={loading} error={error} data={data}>
-      <CityDetail city={city} current={data?.city.current} />
+      <CityDetail city={location.city} current={data?.city.current} />
     </QueryResult>
   );
 };
 
 export default City;
+
+const PlaceholderText = styled.h3({
+  marginTop: '200px',
+  textAlign: 'center',
+});
+

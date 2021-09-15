@@ -63,7 +63,7 @@ const FavoriteCities = ({ handleError }) => {
 export default FavoriteCities;
 
 const CardContainer = styled.div({
-  maxWidth: '700px',
+  maxWidth: '640px',
   margin: '10px auto 30px auto',
   p: {
     textAlign: 'center',
