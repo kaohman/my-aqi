@@ -8,7 +8,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
   uri: 'http://localhost:4000/',
   headers: {
-    authorization: localStorage.getItem('token') || '',
+    authorization: window.localStorage.getItem('token') || '',
   },
 });
 

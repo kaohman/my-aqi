@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { Layout } from '../components';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 import Dropdown from '../components/dropdown';
 import ErrorModal from '../components/error-modal';
 import City from '../containers/city';
@@ -60,6 +60,15 @@ export const CITIES = gql`
       city
       state
       country
+    }
+  }
+`;
+
+export const ADD_FAVORITE = gql`
+  mutation addFavoriteCity($addFavoriteCityCountry: String, $addFavoriteCityState: String, $addFavoriteCityCity: String) {
+    addFavoriteCity(country: $addFavoriteCityCountry, state: $addFavoriteCityState, city: $addFavoriteCityCity) {
+      success
+      message
     }
   }
 `;
@@ -128,6 +137,19 @@ const Home = () => {
     onError: error => handleQueryError({ ...filters, city: undefined }, error),
   });
 
+  const [addFavorite] = useMutation(
+    ADD_FAVORITE,
+    {
+      variables: {
+        addFavoriteCityCountry: filters.country,
+        addFavoriteCityState: filters.state,
+        addFavoriteCityCity: filters.city,
+      },
+      refetchQueries: ['getFavoriteCities'],
+      onError: (error) => setError(error),
+    }
+  );
+
   useEffect(() => {
     const hasToken = !!window.localStorage.getItem('token');
     if (hasToken) {
@@ -146,7 +168,7 @@ const Home = () => {
       <Login
         isLoggedIn={isLoggedIn}
         updateLoginStatus={status => setIsLoggedIn(status)}
-        handleLoginError={err => handleQueryError(err)}
+        handleError={err => handleQueryError(err)}
       />
       <FiltersContainer>
         <Title>
@@ -176,8 +198,16 @@ const Home = () => {
             options={citiesResult?.data?.cities.map(c => c.city)}
           />
         </DropdownContainer>
+        {isLoggedIn && 
+          <AddFavoriteButton
+            disabled={!filters.city}
+            onClick={addFavorite}
+          >
+            Add To Favorites
+          </AddFavoriteButton>
+        }
       </FiltersContainer>
-      {isLoggedIn && <FavoriteCities />}
+      {isLoggedIn && <FavoriteCities handleError={err => handleQueryError(err)} />}
       {!!filters.city && 
         <City
           country={filters.country}
@@ -217,4 +247,9 @@ const PlaceholderText = styled.h3({
   marginTop: '200px',
   textAlign: 'center',
 });
+
+const AddFavoriteButton = styled.button({
+  margin: '10px 0 0 auto',
+  display: 'block',
+})
 

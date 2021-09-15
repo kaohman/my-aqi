@@ -20,10 +20,11 @@ class UserApi extends DataSource {
   }
 
   async getFavoriteCities() {
-    // get user's favorite cities and use AQI api to get current info for each of those cities
+    const user = this.context.user;
+    if (!user) return [];
+
     const userId = this.context.user.id;
     const favorites = await this.store.favoriteCities.findAll({ where: { userId } });
-    console.log(favorites)
     return favorites;
   }
 

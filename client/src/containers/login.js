@@ -4,7 +4,7 @@ import LoginForm from '../components/login-form';
 import LogoutForm from '../components/logout-form';
 
 export const LOGIN_USER = gql`
-  mutation Login($email: String!) {
+  mutation login($email: String!) {
     login(email: $email) {
       email
       token
@@ -12,7 +12,7 @@ export const LOGIN_USER = gql`
   }
 `;
 
-const Login = ({ isLoggedIn, updateLoginStatus, handleLoginError }) => {
+const Login = ({ isLoggedIn, updateLoginStatus, handleError }) => {
   const [login] = useMutation(
     LOGIN_USER,
     {
@@ -23,7 +23,7 @@ const Login = ({ isLoggedIn, updateLoginStatus, handleLoginError }) => {
           updateLoginStatus(true);
         }
       },
-      onError: (error) => handleLoginError(error),
+      onError: (error) => handleError(error),
     }
   );
 
