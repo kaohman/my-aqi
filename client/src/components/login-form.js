@@ -25,7 +25,7 @@ const LoginForm = ({ login }) => {
           data-testid="login-input"
           onChange={(e) => onChange(e)}
         />
-        <button type="submit">Log in</button>
+        <button type="submit">Log In</button>
       </StyledForm>
     </Container>
   );
@@ -35,28 +35,23 @@ export default LoginForm;
 
 const Container = styled('div')({
   display: 'flex',
-  flexDirection: 'column',
   alignItems: 'center',
-  flexGrow: 1,
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
+  justifyContent: 'flex-end',
+  marginTop: '20px',
 });
 
-const Heading = styled('h1')({
-  margin: '10px',
+const Heading = styled('h5')({
+  margin: '0 10px',
 });
 
 
 const StyledForm = styled('form')({
-  width: '100%',
-  maxWidth: 406,
-  borderRadius: 3,
-  boxShadow: '6px 6px 1px rgba(0, 0, 0, 0.25)',
-  backgroundColor: 'white',
+  display: 'flex',
+  gap: '10px',
 });
 
 const StyledInput = styled('input')({
-  width: '100%',
+  width: '200px',
   fontSize: 16,
   outline: 'none',
 });

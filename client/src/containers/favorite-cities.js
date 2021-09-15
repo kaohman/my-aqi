@@ -9,10 +9,7 @@ export const FAVORITES = gql`
 query getFavoriteCities {
   favoriteCities {
     id
-    country
-    state
     city
-    coordinates
     current {
       pollution {
         aqius

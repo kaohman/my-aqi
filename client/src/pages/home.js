@@ -143,6 +143,11 @@ const Home = () => {
   return (
     <Layout grid>
       {error && <ErrorModal error={error} dismissError={() => setError(null)} />}
+      <Login
+        isLoggedIn={isLoggedIn}
+        updateLoginStatus={status => setIsLoggedIn(status)}
+        handleLoginError={err => handleQueryError(err)}
+      />
       <FiltersContainer>
         <Title>
           <h3>Climate change and poor air quality got you down?</h3>
@@ -172,7 +177,6 @@ const Home = () => {
           />
         </DropdownContainer>
       </FiltersContainer>
-      {!isLoggedIn && <Login />}
       {isLoggedIn && <FavoriteCities />}
       {!!filters.city && 
         <City
