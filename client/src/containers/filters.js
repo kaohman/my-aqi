@@ -69,13 +69,12 @@ export const ADD_FAVORITE = gql`
 `;
 
 // Component
-const Filters = ({ updateLocation, handleError }) => {
+const Filters = ({ updateLocation, handleError, isLoggedIn }) => {
   const initialFilters = {
     country: undefined,
     state: undefined,
     city: undefined,
   };
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [filters, setFilters] = useState(initialFilters);
 
   const saveCurrentLocation = (filters) => {
@@ -146,11 +145,6 @@ const Filters = ({ updateLocation, handleError }) => {
   );
 
   useEffect(() => {
-    const hasToken = !!window.localStorage.getItem('token');
-    if (hasToken) {
-      setIsLoggedIn(true);
-    }
-
     const lastFilters = window.localStorage.getItem('locationFilters');
     if (!!lastFilters) {
       setFilters(JSON.parse(lastFilters));

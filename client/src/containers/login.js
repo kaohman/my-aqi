@@ -2,6 +2,8 @@ import React from 'react';
 import { gql, useMutation } from '@apollo/client';
 import LoginForm from '../components/login-form';
 import LogoutForm from '../components/logout-form';
+import { isLoggedInVar } from '../cache';
+import { useApolloClient } from '@apollo/client';
 
 export const LOGIN_USER = gql`
   mutation login($email: String!) {
@@ -12,7 +14,8 @@ export const LOGIN_USER = gql`
   }
 `;
 
-const Login = ({ isLoggedIn, updateLoginStatus, handleError }) => {
+const Login = ({ isLoggedIn, handleError }) => {
+  const client = useApolloClient();
   const [login] = useMutation(
     LOGIN_USER,
     {
@@ -20,17 +23,21 @@ const Login = ({ isLoggedIn, updateLoginStatus, handleError }) => {
         if (login) {
           localStorage.setItem('token', login.token);
           localStorage.setItem('userEmail', login.email);
-          updateLoginStatus(true);
+          isLoggedInVar(true);
         }
       },
+      refetchQueries: ['getFavoriteCities'],
       onError: (error) => handleError(error),
     }
   );
 
   const logout = () => {
+    client.cache.evict({ fieldName: 'me' });
+    client.cache.gc();
+  
     localStorage.removeItem('token');
     localStorage.removeItem('userEmail');
-    updateLoginStatus(false);
+    isLoggedInVar(false);
   };
 
   if (isLoggedIn) return <LogoutForm logout={logout} />;

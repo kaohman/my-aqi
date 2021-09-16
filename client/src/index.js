@@ -2,10 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import GlobalStyles from './styles';
 import Pages from './pages';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloClient, ApolloProvider } from '@apollo/client';
+import { cache } from './cache';
 
 const client = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache,
   uri: 'http://localhost:4000/',
   headers: {
     authorization: window.localStorage.getItem('token') || '',
